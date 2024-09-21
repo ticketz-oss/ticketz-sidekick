@@ -16,9 +16,9 @@ RETENTION_FILES=${RETENTION_FILES-7}           # Number of files to keep
 wait_for_postgres() {
     for i in {1..30}
     do
-        if psql -h "${DB_HOST}" -U "${DB_USER}" -d "${DB_NAME}" -c '\q'; then
+        if psql -h "${DB_HOST}" -U "${DB_USER}" -d "${DB_NAME}" -c '\q' -q; then
             echo "Postgres is up - executing command"
-            return
+			return
         else
             echo "Postgres is unavailable - sleeping"
             sleep 1
@@ -63,7 +63,7 @@ restore() {
     wait_for_postgres
 
     # Check if the database is empty
-    DB_COUNT=$(psql -h "${DB_HOST}" -U "${DB_USER}" -d "${DB_NAME}" -t -c "SELECT count(*) FROM information_schema.tables WHERE table_schema = 'public';")
+    DB_COUNT=$(psql -h "${DB_HOST}" -U "${DB_USER}" -d "${DB_NAME}" -t -c "SELECT count(*) FROM information_schema.tables WHERE table_schema = 'public';" -q)
 
     if [ "${DB_COUNT}" -gt 0 ]; then
         echo "The database already has tables. Will not restore."
@@ -81,14 +81,12 @@ restore() {
     echo "Starting restoration..."
 
     echo "Restoring database..."
-    psql -h "${DB_HOST}" -U "${DB_USER}" -d "${DB_NAME}" < "${BACKUP_DIR}/db_dump.sql"
-
+    psql -h "${DB_HOST}" -U "${DB_USER}" -d "${DB_NAME}" -q < "${BACKUP_DIR}/db_dump.sql"
     # Restore files from the last backup
     tar -xzf $(ls -t ${BACKUP_DIR}/${BACKUP_BASENAME}-*.tar.gz | head -n 1) -C /
 
     echo "Restoration completed."
 }
-
 
 # Function for cleanup of old backups
 cleanup() {
