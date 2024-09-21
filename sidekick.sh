@@ -58,6 +58,15 @@ restore() {
 
     echo "Starting restoration..."
 
+    # Check if folders are empty
+    # Check if the directories are empty
+    for dir in "${DATA_DIRS[@]}"; do
+        if [ "$(ls -A $dir)" ]; then
+            echo "Directory $dir is not empty. Restoration aborted."
+            return
+        fi
+    done
+
     # Restore files from the last backup
     tar -xzf $(ls -t $BACKUP_DIR/*.tar.gz | head -n 1) -C /
 
