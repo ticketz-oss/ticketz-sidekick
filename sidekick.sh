@@ -3,10 +3,10 @@
 # Configuration variables
 BACKUP_DIR="/backups"          # Directory visible outside the container
 DATA_DIRS=("/backend-public" "/backend-private")  # List of directories with the files
-DB_NAME="${TICKETZ_DB_NAME-ticketz}"           # Database name
-DB_USER="${TICKETZ_DB_USER-ticketz}"           # Database user
-DB_HOST="${TICKETZ_DB_HOST-postgres}"          # Database host
-DB_PORT="${TICKETZ_DB_PORT-5432}"              # Database port
+DB_NAME="${DB_NAME-ticketz}"           # Database name
+DB_USER="${DB_USER-ticketz}"           # Database user
+DB_HOST="${DB_HOST-postgres}"          # Database host
+DB_PORT="${DB_PORT-5432}"              # Database port
 TIMESTAMP=$(date +"%Y%m%d%H%M%S")
 BACKUP_FILE="$BACKUP_DIR/backup-$TIMESTAMP.tar.gz"
 RETENTION_FILES=${RETENTION_FILES-7}           # Number of files to keep
