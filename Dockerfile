@@ -3,7 +3,8 @@ FROM postgres:16-alpine
 
 RUN apk update && apk add --no-cache \
     tar \
-    bash
+    bash \
+    findutils
 
 WORKDIR /app
 

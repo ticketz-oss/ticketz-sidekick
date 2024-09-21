@@ -55,7 +55,7 @@ cleanup() {
     echo "Running cleanup of old backups..."
 
     # List all backup files, sort by modification time, and remove files exceeding the retention limit
-    ls -t $BACKUP_DIR/*.tar.gz | tail -n +$(($RETENTION_FILES + 1)) | xargs -d '\n' rm -f --
+    ls -t $BACKUP_DIR/*.tar.gz | tail -n +$(($RETENTION_FILES + 1)) | /usr/bin/xargs -d '\n' rm -f --
 
     echo "Cleanup completed."
 }
