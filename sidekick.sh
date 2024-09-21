@@ -18,6 +18,7 @@ wait_for_postgres() {
     do
         if psql -h "${DB_HOST}" -U "${DB_USER}" -d "${DB_NAME}" -c '\q'; then
             echo "Postgres is up - executing command"
+            return
         else
             echo "Postgres is unavailable - sleeping"
             sleep 1
