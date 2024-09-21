@@ -9,7 +9,7 @@ DB_HOST="${TICKETZ_DB_HOST-postgres}"          # Database host
 DB_PORT="${TICKETZ_DB_PORT-5432}"              # Database port
 TIMESTAMP=$(date +"%Y%m%d%H%M%S")
 BACKUP_FILE="$BACKUP_DIR/backup-$TIMESTAMP.tar.gz"
-RETENTION_FILES=10             # Number of files to keep
+RETENTION_FILES=${RETENTION_FILES-7}           # Number of files to keep
 
 # Database and folders backup function
 backup() {
