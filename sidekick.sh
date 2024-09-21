@@ -11,8 +11,28 @@ TIMESTAMP=$(date +"%Y%m%d%H%M%S")
 BACKUP_FILE="$BACKUP_DIR/backup-$TIMESTAMP.tar.gz"
 RETENTION_FILES=${RETENTION_FILES-7}           # Number of files to keep
 
+# Wait for progress to be available
+wait_for_postgres() {
+    for i in {1..30}
+    do
+        if psql -h "$DB_HOST" -U "$DB_USER" -d "$DB_NAME" -c '\q'; then
+            echo "Postgres is up - executing command"
+            return
+        else
+            echo "Postgres is unavailable - sleeping"
+            sleep 1
+        fi
+    done
+
+    echo "Postgres is still unavailable after 30 seconds - exiting"
+    exit 1
+}
+
 # Database and folders backup function
 backup() {
+    # Wait for Postgres to become available
+    wait_for_postgres
+
     echo "Starting backup..."
 
     # Postgres database dump
@@ -31,7 +51,11 @@ backup() {
 }
 
 # Function to restore the database and files
+
 restore() {
+    # Wait for Postgres to become available
+    wait_for_postgres
+
     echo "Starting restoration..."
 
     # Restore files from the last backup
@@ -49,6 +73,7 @@ restore() {
 
     echo "Restoration completed."
 }
+
 
 # Function for cleanup of old backups
 cleanup() {
