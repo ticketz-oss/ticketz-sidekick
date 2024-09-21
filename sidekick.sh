@@ -53,6 +53,12 @@ backup() {
 # Function to restore the database and files
 
 restore() {
+    # Check if there are backup files
+    if [ -z "$(ls -A $BACKUP_DIR/*.tar.gz 2>/dev/null)" ]; then
+        echo "No backup files found. Exiting."
+        exit 1
+    fi
+
     # Wait for Postgres to become available
     wait_for_postgres
 
@@ -69,7 +75,9 @@ restore() {
 
     # Restore files from the last backup
     tar -xzf $(ls -t $BACKUP_DIR/*.tar.gz | head -n 1) -C /
-
+    
+    
+    
     # Check if the database is empty
     DB_COUNT=$(psql -h "$DB_HOST" -U "$DB_USER" -d "$DB_NAME" -t -c "SELECT count(*) FROM information_schema.tables WHERE table_schema = 'public';")
 
