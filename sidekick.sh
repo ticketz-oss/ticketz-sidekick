@@ -81,10 +81,10 @@ restore() {
     echo "Starting restoration..."
 
     # Restore files from the last backup
-    tar -xzf $(ls -t ${BACKUP_DIR}/${BACKUP_BASENAME}-*.tar.gz | head -n 1) -C /
+    tar -xzf $(ls -t ${BACKUP_DIR}/${BACKUP_BASENAME}-*.tar.gz | head -n 1) -C / || exit 1
 
     echo "Restoring database..."
-    psql -h "${DB_HOST}" -U "${DB_USER}" -d "${DB_NAME}" -q < "${BACKUP_DIR}/db_dump.sql"
+    psql -h "${DB_HOST}" -U "${DB_USER}" -d "${DB_NAME}" -q < "${BACKUP_DIR}/db_dump.sql" &> /dev/null || exit 1
 
     echo "Restoration completed."
 }
