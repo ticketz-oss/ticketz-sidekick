@@ -12,4 +12,4 @@ COPY sidekick.sh /app/sidekick.sh
 
 RUN chmod +x /app/sidekick.sh
 
-ENTRYPOINT ["bash", "-x", "/app/sidekick.sh"]
+ENTRYPOINT ["bash", "/app/sidekick.sh"]
