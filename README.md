@@ -34,7 +34,7 @@ A instalação apenas coloca o componente nas dependências, a execução dos ba
 Para executar um backup é preciso apenas posicionar-se dentro da pasta de instalação do sistema (geralmente `ticketz-docker-acme`) e executar o container. Os seguintes comandos fazem essa tarefa:
 
 ```bash
-cd ~/ticketz-docker/acme
+cd ~/ticketz-docker-acme
 sudo docker compose run --rm sidekick backup
 ```
 
