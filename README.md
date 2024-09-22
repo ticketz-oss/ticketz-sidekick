@@ -62,4 +62,10 @@ docker compose run --rm sidekick backup
 EOF
 ```
 
+Após gerar o arquivo de agendamento é necessário certificar-se de que ele é executável:
+
+```bash
+chmod +x /etc/cron.daily/backkup-ticketz.sh
+```
+
 Outras automações são possíveis após essa execução, como por exemplo enviar a cópia para outro sistema e apagar a cópia local.
