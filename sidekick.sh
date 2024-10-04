@@ -12,6 +12,8 @@ BACKUP_BASENAME="ticketz-backup"
 BACKUP_FILE="${BACKUP_DIR}/${BACKUP_BASENAME}-${TIMESTAMP}.tar.gz"
 RETENTION_FILES=${RETENTION_FILES-7}           # Number of files to keep
 
+BASEDIR=${PWD}
+
 # Wait for progress to be available
 wait_for_postgres() {
     for i in {1..30}
@@ -89,6 +91,75 @@ restore() {
     echo "Restoration completed."
 }
 
+
+# Function to retrieve specified tables and fields from a second database
+retrieve() {
+    if [ -z "$3" ]; then
+        echo -e "\nSyntax:\n\n\t$0 retrieve <dbhost> <dbname> <dbuser> [dbpass] [outputfolder]\n\n"
+        exit 1
+    fi
+
+    SECOND_DB_HOST=$1
+    SECOND_DB_NAME=$2
+    SECOND_DB_USER=$3
+    SECOND_DB_PASS=$4
+    OUTPUT_DIR="${5-/retrieve}"  # Directory to store the CSV files
+    ARCHIVE_NAME="retrieved_data.tar.gz" # Name of the final tar.gz file
+
+
+    # Load tables and field lists if not defined
+    . "${BASEDIR}/retrieve-tables.sh"
+
+    # Ensure the output directory exists
+    mkdir -p "$OUTPUT_DIR"
+
+    # Loop over each table and generate \COPY command for each
+    for key in "${!RETRIEVE_TABLES[@]}"; do
+        # Get the fields for the current table
+        fields=${RETRIEVE_TABLES[$key]}
+
+        # Extract the table name from the key by removing the prefix
+        table=${key#*-}
+
+        # Define the output file with the counter and table name (e.g., 001-users.csv, 002-orders.csv)
+        output_file="$OUTPUT_DIR/${key}.csv"
+
+        # Generate the \COPY command to export the table with the selected fields to CSV
+        echo "Exporting table '$table'"
+        PGPASSWORD="${SECOND_DB_PASS}" psql -h "${SECOND_DB_HOST}" -U "${SECOND_DB_USER}" -d "${SECOND_DB_NAME}" -c "\COPY (SELECT $fields FROM \"$table\") TO '$output_file' WITH CSV HEADER" &> "${output_file}.log"
+
+        if [ $? -gt 0 ]; then
+           echo "Error exporting $table: "
+           cat "${output_file}.log"
+           exit 1
+        fi
+ 
+        rm "${output_file}.log"
+
+
+        # Check if the export was successful
+        if [[ $? -eq 0 ]]; then
+            echo "Table '$table' exported successfully to $output_file."
+        else
+            echo "Error exporting table '$table'."
+        fi
+    done
+
+    # After all exports are done, create a tar.gz archive with all CSV files
+    echo "Creating tar.gz archive with all CSV files..."
+    cd "$OUTPUT_DIR"
+    
+    tar -czf "$ARCHIVE_NAME" *.csv
+
+    # Check if the tar.gz creation was successful
+    if [[ $? -eq 0 ]]; then
+        echo "Archive '$ARCHIVE_NAME' created successfully in $OUTPUT_DIR."
+        rm *.csv
+    else
+        echo "Error creating archive."
+    fi
+}
+
 # Function for cleanup of old backups
 cleanup() {
     echo "Running cleanup of old backups..."
@@ -107,8 +178,12 @@ case "$1" in
     restore)
         restore
         ;;
+    retrieve)
+        shift
+        retrieve $*
+        ;;
     *)
-        echo "Unrecognized command. Use 'backup' or 'restore'."
+        echo "Unrecognized command. Use 'backup', 'restore' or 'retrieve'."
         exit 1
         ;;
 esac
