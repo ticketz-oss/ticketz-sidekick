@@ -127,9 +127,9 @@ Para importar os dados extraídos é preciso apenas que os arquivos `retrieved_d
 > 
 > Fazer o checklist inicial de instalação
 > 
-> [X] Servidor limpo com os comandos `git` e o `curl` funcinais
-> [X] DNS apontando para o hostname
-> [X] Portas 80 e 443 livres, sem proxy
+> - [X] Servidor limpo com os comandos `git` e o `curl` funcionais
+> - [X] DNS apontando para o hostname
+> - [X] Portas 80 e 443 livres, sem proxy
 
 Então, acessando a nova instalação e tendo copiado os arquivos para a pasta corrente basta rodar o comando de instalação:
 
