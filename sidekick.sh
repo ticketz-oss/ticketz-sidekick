@@ -114,7 +114,7 @@ retrieve() {
     mkdir -p "$OUTPUT_DIR"
     
     # Remove orphan records of WhatsapQueues and UserQueues
-    PGPASSWORD="${SECOND_DB_PASS}" psql -h "${SECOND_DB_HOST}" -U "${SECOND_DB_USER}" -d "${SECOND_DB_NAME}" -c 'DELETE FROM "WhatsappQueues" WHERE "queueId" NOT IN (SELECT "id" FROM "Queues");'
+    PGPASSWORD="${SECOND_DB_PASS}" psql -h "${SECOND_DB_HOST}" -U "${SECOND_DB_USER}" -d "${SECOND_DB_NAME}" -c 'DELETE FROM "WhatsappQueues" WHERE "whatsappId" NOT IN (SELECT "id" FROM "Whatsapps") OR "queueId" NOT IN (SELECT "id" FROM "Queues");'
     PGPASSWORD="${SECOND_DB_PASS}" psql -h "${SECOND_DB_HOST}" -U "${SECOND_DB_USER}" -d "${SECOND_DB_NAME}" -c 'DELETE FROM "UserQueues" WHERE "userId" NOT IN (SELECT "id" FROM "Users") OR "queueId" NOT IN (SELECT "id" FROM "Queues");'
 
     # Loop over each table and generate \COPY command for each
