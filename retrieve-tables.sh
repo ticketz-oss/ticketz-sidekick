@@ -2,7 +2,7 @@
 declare -A RETRIEVE_TABLES=(
     ["001-Plans"]='id,value,queues,"createdAt",users,"updatedAt",name,connections'
     ["002-Companies"]='schedules,"dueDate",name,"updatedAt","createdAt",status,"planId",phone,recurrence,id,email'
-    ["003-Users"]='"companyId",super,"passwordHash",email,"tokenVersion",profile,name,"createdAt",id,"updatedAt",online'
+    ["003-Users"]='"companyId",super,"passwordHash",email,"tokenVersion",profile,name,"createdAt",id,"updatedAt"'
     ["004-Whatsapps"]='"greetingMessage",qrcode,plugged,token,retries,id,session,"updatedAt","ratingMessage","farewellMessage",provider,"companyId","isDefault",status,name,"complationMessage","createdAt","outOfHoursMessage",battery'
     ["005-Queues"]='color,schedules,name,"companyId","updatedAt","greetingMessage","createdAt",id,"outOfHoursMessage"'
     ["006-QueueOptions"]='title,"updatedAt","createdAt","queueId",message,"parentId",id,option'
