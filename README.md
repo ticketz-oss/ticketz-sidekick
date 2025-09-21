@@ -74,6 +74,12 @@ Caso esteja fazendo uma instalação utilizando o projeto `ticketz-docker-local`
 sudo docker compose run --rm -T sidekick restore
 ```
 
+4. após a conclusão da restauração basta subir os todos os containers
+
+```
+sudo docker compose up -d
+```
+
 #### Parâmetros
 
 No arquivo .env-backend apenas um parâmetro é necessário para determinar quantos arquivos de backup deseja reter, a configuração padrão para esse parâmetro é 7 arquivos retidos.
