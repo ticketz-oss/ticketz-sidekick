@@ -50,7 +50,29 @@ Após alguns minutos a pasta `backups` dentro deste arquivo terá um arquivo com
 
 #### Restaurando um backup
 
-A restauração pode ser feita em várias maneiras, o método mais simples é utilizando o próprio comando de instalação facilitada tendo o arquivo de backup a ser restaurado na pasta corrente, o script de instalação irá executar o sidekick.
+Dependendo da forma de instalação utilizada o processo de restauração é diferente.
+
+##### Pelo auto instalador
+
+Em um servidor publicamente acessível, já com o DNS apontando um hostname para ele e com as portas liberadas basta ter o arquivo de backup a ser restaurado na pasta corrente. O script de instalação irá executar o sidekick.
+
+Por exemplo:
+
+```
+curl -sSL get.ticke.tz | sudo bash -s hostname.example.com email@example.com
+```
+
+##### Restauração manual
+
+Caso esteja fazendo uma instalação utilizando o projeto `ticketz-docker-local` ou o `ticketz-docker-cloudflare`, é necessário preparar o ambiente completamente como se estivesse fazendo uma nova instalação. Os passos são simples:
+
+1. importar o projeto desejado e configurar os arquivos .env
+2. criar uma pasta chamada `backups` dentro da pasta do projeto e colocar dentro dela o arquivo obtido no processo de backup
+3. executar o comando de restauração abaixo:
+
+```
+sudo docker compose run --rm -T sidekick restore
+```
 
 #### Parâmetros
 
