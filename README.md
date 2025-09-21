@@ -66,7 +66,7 @@ curl -sSL get.ticke.tz | sudo bash -s hostname.example.com email@example.com
 
 Caso esteja fazendo uma instalação utilizando o projeto `ticketz-docker-local` ou o `ticketz-docker-cloudflare`, é necessário preparar o ambiente completamente como se estivesse fazendo uma nova instalação. Os passos são simples:
 
-1. importar o projeto desejado e configurar os arquivos .env
+1. importar o projeto desejado e configurar os arquivos `.env-backend` e `.env-frontend` de acordo com as instruções de instalação
 2. criar uma pasta chamada `backups` dentro da pasta do projeto e colocar dentro dela o arquivo obtido no processo de backup
 3. executar o comando de restauração abaixo:
 
