@@ -27,7 +27,7 @@ curl -sSL update.ticke.tz | sudo bash -s main
 Quem está utilizando a versão PRO deve utilizar o comando:
 
 ```bash
-curl -sSL pro.ticke.tz | sudo bash -s pro
+curl -sSL update.ticke.tz | sudo bash -s pro
 ```
 
 Para utilizar
