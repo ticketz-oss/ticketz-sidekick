@@ -33,6 +33,15 @@ wait_for_postgres() {
 
 # Database and folders backup function
 backup() {
+    # Check for --dbonly parameter
+    DBONLY=0
+    for arg in "$@"; do
+        if [ "$arg" = "--dbonly" ]; then
+            DBONLY=1
+            break
+        fi
+    done
+
     # Wait for Postgres to become available
     wait_for_postgres
 
@@ -41,8 +50,13 @@ backup() {
     # Postgres database dump
     pg_dump -h "${DB_HOST}" -p "${DB_PORT}" -U "${DB_USER}" "${DB_NAME}" > "${BACKUP_DIR}/db_dump.sql"
 
-    # Compress database and all data folders
-    tar -czf "${BACKUP_FILE}" "${BACKUP_DIR}/db_dump.sql" $(printf " %s" "${DATA_DIRS[@]}")
+    if [ $DBONLY -eq 1 ]; then
+        # Only backup the database dump
+        tar -czf "${BACKUP_FILE}" "${BACKUP_DIR}/db_dump.sql"
+    else
+        # Backup database dump and data directories
+        tar -czf "${BACKUP_FILE}" "${BACKUP_DIR}/db_dump.sql" $(printf " %s" "${DATA_DIRS[@]}")
+    fi
 
     # Remove the sql dump after compressing
     rm "${BACKUP_DIR}/db_dump.sql"
