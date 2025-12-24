@@ -191,7 +191,8 @@ cleanup() {
 # Choice of operation according to the passed command
 case "$1" in
     backup)
-        backup
+        shift
+        backup $*
         ;;
     restore)
         restore
