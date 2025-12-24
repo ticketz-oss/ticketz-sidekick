@@ -96,7 +96,8 @@ restore() {
     for dir in "${DATA_DIRS[@]}"; do
         if ! tar -tzf "$LATEST_BACKUP" | grep -q "^${dir#/}"; then
             echo "Backup file have only the database dump"
-            set DBONLY=1
+            DBONLY=1
+            break
         fi
     done
 
