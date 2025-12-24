@@ -33,10 +33,12 @@ wait_for_postgres() {
 
 # Database and folders backup function
 backup() {
+    echo "Backup received parameters: $*"
     # Check for --dbonly parameter
     DBONLY=0
     for arg in "$@"; do
         if [ "$arg" = "--dbonly" ]; then
+            echo "Will backup only the database"
             DBONLY=1
             break
         fi
@@ -45,16 +47,17 @@ backup() {
     # Wait for Postgres to become available
     wait_for_postgres
 
-    echo "Starting backup..."
-
+    echo "Creating database dump..."
     # Postgres database dump
     pg_dump -h "${DB_HOST}" -p "${DB_PORT}" -U "${DB_USER}" "${DB_NAME}" > "${BACKUP_DIR}/db_dump.sql"
 
+    echo "DBONLY = ${DBONLY}"
     if [ $DBONLY -eq 1 ]; then
         # Only backup the database dump
         tar -czf "${BACKUP_FILE}" "${BACKUP_DIR}/db_dump.sql"
     else
         # Backup database dump and data directories
+        echo "Backing up data directories: ${DATA_DIRS[*]}"
         tar -czf "${BACKUP_FILE}" "${BACKUP_DIR}/db_dump.sql" $(printf " %s" "${DATA_DIRS[@]}")
     fi
 
