@@ -33,7 +33,6 @@ wait_for_postgres() {
 
 # Database and folders backup function
 backup() {
-    echo "Backup received parameters: $*"
     # Check for --dbonly parameter
     DBONLY=0
     for arg in "$@"; do
@@ -72,11 +71,14 @@ backup() {
 
 # Function to restore the database and files
 restore() {
+  
     # Check if there are backup files
     if [ -z "$(ls -A ${BACKUP_DIR}/${BACKUP_BASENAME}-*.tar.gz 2>/dev/null)" ]; then
         echo "No backup files found. Exiting."
         exit 1
     fi
+
+    LATEST_BACKUP=$(ls -t ${BACKUP_DIR}/${BACKUP_BASENAME}-*.tar.gz | head -n 1)
 
     # Wait for Postgres to become available
     wait_for_postgres
@@ -89,9 +91,18 @@ restore() {
         return
     fi
 
+    DBONLY=0
+    # Check if backup file has data directories
+    for dir in "${DATA_DIRS[@]}"; do
+        if ! tar -tzf "$LATEST_BACKUP" | grep -q "^${dir#/}"; then
+            echo "Backup file have only the database dump"
+            set DBONLY=1
+        fi
+    done
+
     # Check if the directories are empty
     for dir in "${DATA_DIRS[@]}"; do
-        if [ "$(ls -A ${dir})" ]; then
+        if [ "$(ls -A ${dir})" ] && [ $DBONLY -eq 0 ] ; then
             echo "Directory ${dir} is not empty. Will not restore."
             return
         fi
@@ -100,7 +111,7 @@ restore() {
     echo "Starting restoration..."
 
     # Restore files from the last backup
-    tar -xzf $(ls -t ${BACKUP_DIR}/${BACKUP_BASENAME}-*.tar.gz | head -n 1) -C / || exit 1
+    tar -xzf $(ls -t ${LATEST_BACKUP} | head -n 1) -C / || exit 1
 
     echo "Restoring database..."
     psql -h "${DB_HOST}" -U "${DB_USER}" -d "${DB_NAME}" -q < "${BACKUP_DIR}/db_dump.sql" &> /dev/null || exit 1
